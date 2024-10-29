@@ -17,6 +17,7 @@ options.add_argument("--disable-blink-features=AutomationControlled")
 # Инициализируем драйвер Chrome с использованием Service
 driver = webdriver.Chrome(service=service, options=options)
 try:
+    # Переход на страницу с камерами
     driver.get(url=url)
     time.sleep(2)
     login_input = driver.find_element(By.CLASS_NAME, 'form_auth__input')
@@ -32,8 +33,8 @@ try:
     time.sleep(2)
     driver.switch_to.window(driver.window_handles[1])
     link_btn_last = driver.find_element(By.XPATH, '//div[text()="Список"]').click()
-    time.sleep(5)
-
+    #Пробуем вывести данные
+    soup =  BeautifulSoup(driver.page_source, "lxml")
 except Exception as ex:
     print(ex)
 finally:
