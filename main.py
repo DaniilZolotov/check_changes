@@ -47,7 +47,7 @@ try:
     screenshot_path = os.path.join(screenshot_folder, screenshot_name)
     driver.save_screenshot(screenshot_path)
     print(f'Скриншот сохранен: {screenshot_path}')
-
+#Пока будем делать скриншоты, а не вывод кода
         # Ждем 30 минут перед следующим скриншотом
     time.sleep(1800)  # 1800 секунд = 30 минут    
 except Exception as ex:
