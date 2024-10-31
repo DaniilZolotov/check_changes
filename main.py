@@ -5,6 +5,8 @@ import time
 from fake_useragent import UserAgent
 import os
 import telebot
+import shutil
+
 
 # Указываем путь к chromedriver.exe
 chromedriver_path = r"C:\Users\zolot\Desktop\try py\chrome\chromedriver.exe"
@@ -16,7 +18,7 @@ TELEGRAM_CHAT_ID = '-4554782359'
 
 # Папка для скриншотов
 screenshot_folder = r'C:\Users\zolot\Desktop\try py\screenshot'  # папка скриншотов
-
+#отправка скринов 
 def send_screenshot(photo_path, message_text="Скриншот"):
     """Отправляет фото в Telegram чат."""
     with open(photo_path, 'rb') as photo:
@@ -25,6 +27,21 @@ def send_screenshot(photo_path, message_text="Скриншот"):
             print('Скриншот отправлен в Telegram.')
         except Exception as e:
             print(f"Ошибка при отправке сообщения в Telegram: {e}")
+
+#очистка дериктории
+def clear_directory(folder_path):
+    # Проверяем, существует ли указанный путь
+    if os.path.exists(folder_path):
+        # Удаляем все содержимое папки
+        for item in os.listdir(folder_path):
+            item_path = os.path.join(folder_path, item)
+            # Проверяем, является ли элемент файлом или директорией
+            if os.path.isdir(item_path):
+                shutil.rmtree(item_path)  # Удаляем папку и её содержимое
+            else:
+                os.remove(item_path)  # Удаляем файл
+    else:
+        print(f"Папка {folder_path} не существует.")
 
 def main():
     while True:
@@ -65,6 +82,9 @@ def main():
             driver.switch_to.window(driver.window_handles[-1])
             driver.find_element(By.XPATH, '//div[text()="Список"]').click()
             time.sleep(10)
+        
+            #очистка папки
+            clear_directory(screenshot_folder)
 
             # Создание скриншота
             driver.maximize_window()
