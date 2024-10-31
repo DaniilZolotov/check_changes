@@ -34,7 +34,8 @@ def main():
             options = webdriver.ChromeOptions()
             options.add_argument(f"user-agent={ua.random}")
             options.add_argument("--disable-blink-features=AutomationControlled")
-            
+           #headless mode
+            options.add_argument("--headless")
             # Создаем объект Service и передаем путь к драйверу
             service = Service(executable_path=chromedriver_path)
             
