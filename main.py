@@ -41,7 +41,7 @@ try:
     # elements = driver.find_elements(By.CSS_SELECTOR, "background-color")
     # for element in elements:
     #     print(element)
-    # time.sleep(5)
+    time.sleep(10)
     timestamp = time.strftime('%Y%m%d_%H%M%S')
     screenshot_name = f'screenshot_{timestamp}.png'
     screenshot_path = os.path.join(screenshot_folder, screenshot_name)
