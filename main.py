@@ -5,6 +5,7 @@ import time
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 import requests
+import os
 # Указываем путь к chromedriver.exe
 chromedriver_path = "C:\\Users\\zolot\\Desktop\\try py\\chrome\\chromedriver.exe"
 url='https://fkr.eiasmo.ru'
@@ -16,6 +17,7 @@ options.add_argument(f"user-agent={ua.random}")
 options.add_argument("--disable-blink-features=AutomationControlled")
 # Инициализируем драйвер Chrome с использованием Service
 driver = webdriver.Chrome(service=service, options=options)
+screenshot_folder = r'C:\Users\zolot\Desktop\try py\screenshot' #папкаскриншотов
 try:
     # Переход на страницу с камерами
     driver.get(url=url)
@@ -34,7 +36,20 @@ try:
     driver.switch_to.window(driver.window_handles[1])
     link_btn_last = driver.find_element(By.XPATH, '//div[text()="Список"]').click()
     #Пробуем вывести данные
-    soup =  BeautifulSoup(driver.page_source, "lxml")
+    # soup =  BeautifulSoup(driver.page_source, "lxml")
+    # all_elemets = soup.find_all("div")
+    # elements = driver.find_elements(By.CSS_SELECTOR, "background-color")
+    # for element in elements:
+    #     print(element)
+    # time.sleep(5)
+    timestamp = time.strftime('%Y%m%d_%H%M%S')
+    screenshot_name = f'screenshot_{timestamp}.png'
+    screenshot_path = os.path.join(screenshot_folder, screenshot_name)
+    driver.save_screenshot(screenshot_path)
+    print(f'Скриншот сохранен: {screenshot_path}')
+
+        # Ждем 30 минут перед следующим скриншотом
+    time.sleep(1800)  # 1800 секунд = 30 минут    
 except Exception as ex:
     print(ex)
 finally:
