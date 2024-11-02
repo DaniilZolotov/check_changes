@@ -1,34 +1,35 @@
-# Use an official Python runtime as a parent image
+# Используем официальный Python-образ в качестве базового
 FROM python:3.9-slim
 
-# Set environment variables
+# Устанавливаем переменные окружения
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set working directory
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Install dependencies
+# Устанавливаем зависимости Python
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the content of the local src directory to the working directory
+# Копируем содержимое текущей директории в рабочую директорию
 COPY . /app
 
-# Install Chrome and Chromedriver
-RUN apt-get update && apt-get install -y wget gnupg unzip && \
-    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
+# Устанавливаем Chrome и Chromedriver
+RUN apt-get update && apt-get install -y wget gnupg unzip curl && \
+    wget -qO - https://dl.google.com/linux/linux_signing_key.pub | \
+    gpg --dearmor > /usr/share/keyrings/google-chrome.gpg && \
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] \
+    http://dl.google.com/linux/chrome/deb/ stable main" | \
+    tee /etc/apt/sources.list.d/google-chrome.list && \
     apt-get update && \
     apt-get install -y google-chrome-stable
 
-RUN CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
-    wget -N https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip && \
+# Устанавливаем последнюю версию Chromedriver
+RUN CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
+    wget -N https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip && \
     unzip chromedriver_linux64.zip -d /usr/local/bin/ && \
     rm chromedriver_linux64.zip
 
-# Expose necessary port (only if needed for incoming connections)
-# EXPOSE 5000
-
-# Run the application
+# Запускаем приложение
 CMD ["python", "main.py"]
