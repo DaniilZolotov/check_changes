@@ -1,0 +1,35 @@
+# Используем официальный Python-образ в качестве базового
+FROM python:3.9-slim
+
+# Устанавливаем переменные окружения
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Устанавливаем зависимости Python
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Копируем содержимое текущей директории в рабочую директорию
+COPY . /app
+
+# Устанавливаем Chrome и Chromedriver
+RUN apt-get update && apt-get install -y wget gnupg unzip curl && \
+    wget -qO - https://dl.google.com/linux/linux_signing_key.pub | \
+    gpg --dearmor > /usr/share/keyrings/google-chrome.gpg && \
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] \
+    http://dl.google.com/linux/chrome/deb/ stable main" | \
+    tee /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update && \
+    apt-get install -y google-chrome-stable
+
+# Устанавливаем последнюю версию Chromedriver
+RUN CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
+    wget -N https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip && \
+    unzip chromedriver_linux64.zip -d /usr/local/bin/ && \
+    rm chromedriver_linux64.zip
+
+# Запускаем приложение
+CMD ["python", "main.py"]
